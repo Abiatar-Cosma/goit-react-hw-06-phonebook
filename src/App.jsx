@@ -1,66 +1,47 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React from 'react';
 import ContactForm from './components/ContactForm/ContactForm';
 import ContactList from './components/ContactList/ContactList';
 import Filter from './components/Filter/Filter';
 import styles from './App.module.css';
+import { useSelector, useDispatch } from 'react-redux';
+import {
+  addContact,
+  deleteContact,
+} from 'components/redux/Slices/contactsSlice';
+import { setFilter } from 'components/redux/Slices/filterSlice';
 
 const App = () => {
-  const [contacts, setContacts] = useState(() => {
-    const savedContacts = localStorage.getItem('contacts');
-    return savedContacts ? JSON.parse(savedContacts) : [];
-  });
+  const contacts = useSelector(state => state.contacts.items); // Accesează `items` din `contacts`
+  const filter = useSelector(state => state.filter);
+  const dispatch = useDispatch();
 
-  const [filter, setFilter] = useState('');
-
-  // 🔹 Salvăm în localStorage indiferent dacă lista e goală sau nu
-  useEffect(() => {
-    localStorage.setItem('contacts', JSON.stringify(contacts));
-  }, [contacts]);
-
-  const addContact = newContact => {
-    const isDuplicate = contacts.some(
-      contact =>
-        contact.name.toLowerCase() === newContact.name.toLowerCase() ||
-        contact.number === newContact.number
-    );
-
-    if (isDuplicate) {
-      alert(
-        `${newContact.name} or the number ${newContact.number} is already in contacts.`
-      );
-      return;
-    }
-
-    setContacts(prevContacts => [...prevContacts, newContact]);
+  const handleAddContact = newContact => {
+    dispatch(addContact(newContact));
   };
 
-  const changeFilter = e => setFilter(e.target.value);
-
-  // 🔹 Optimizare filtrare cu `useMemo`
-  const filteredContacts = useMemo(() => {
-    const normalizedFilter = filter.toLowerCase();
-    return contacts.filter(contact =>
-      contact.name.toLowerCase().includes(normalizedFilter)
-    );
-  }, [contacts, filter]);
-
-  const deleteContact = id => {
-    setContacts(prevContacts =>
-      prevContacts.filter(contact => contact.id !== id)
-    );
+  const handleDeleteContact = id => {
+    dispatch(deleteContact(id));
   };
+
+  const handleFilterChange = e => {
+    dispatch(setFilter(e.target.value));
+  };
+
+  const filteredContacts = contacts.filter(contact =>
+    contact.name.toLowerCase().includes(filter.toLowerCase())
+  );
 
   return (
     <div className={styles['app-container']}>
       <div className={styles['camera-hole']}></div>
       <div className={styles['screen']}>
         <h1>Phonebook</h1>
-        <ContactForm onSubmit={addContact} />
+        <ContactForm onSubmit={handleAddContact} />
         <h2>Contacts</h2>
-        <Filter value={filter} onChange={changeFilter} />
+        <Filter value={filter} onChange={handleFilterChange} />
         <ContactList
           contacts={filteredContacts}
-          onDeleteContact={deleteContact}
+          onDeleteContact={handleDeleteContact}
         />
       </div>
     </div>
