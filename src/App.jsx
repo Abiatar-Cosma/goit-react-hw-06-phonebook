@@ -11,7 +11,7 @@ import {
 import { setFilter } from 'components/redux/Slices/filterSlice';
 
 const App = () => {
-  const contacts = useSelector(state => state.contacts.items); // Accesează `items` din `contacts`
+  const contacts = useSelector(state => state.contacts.items);
   const filter = useSelector(state => state.filter);
   const dispatch = useDispatch();
 

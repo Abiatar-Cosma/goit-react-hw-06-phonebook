@@ -6,9 +6,8 @@ import styles from './ContactForm.module.css';
 const ContactForm = ({ onSubmit }) => {
   const [name, setName] = useState('');
   const [number, setNumber] = useState('');
-  const [countryCode, setCountryCode] = useState('+40'); // Prefix implicit pentru România
+  const [countryCode, setCountryCode] = useState('+40');
 
-  // Lista de prefixe internaționale
   const countryCodes = [
     { code: '+40', country: 'RO' },
     { code: '+49', country: 'DE' },
@@ -42,27 +41,25 @@ const ContactForm = ({ onSubmit }) => {
     { code: '+421', country: 'SK' },
     { code: '+46', country: 'SE' },
     { code: '+41', country: 'CH' },
-    { code: '+380', country: 'UA' }
+    { code: '+380', country: 'UA' },
   ];
 
-  // Funcții pentru schimbarea valorilor din formular
-  const handleNameChange = (e) => setName(e.target.value);
-  const handleNumberChange = (e) => setNumber(e.target.value);
-  const handleCountryChange = (e) => setCountryCode(e.target.value);
+  const handleNameChange = e => setName(e.target.value);
+  const handleNumberChange = e => setNumber(e.target.value);
+  const handleCountryChange = e => setCountryCode(e.target.value);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = e => {
     e.preventDefault();
 
-    // ✅ Adăugăm automat prefixul internațional
-    const formattedNumber = `${countryCode} ${number.trim().replace(/^0+/, '')}`;
+    const formattedNumber = `${countryCode} ${number
+      .trim()
+      .replace(/^0+/, '')}`;
 
-    // ✅ Trimitem datele în componenta părinte
     onSubmit({ id: nanoid(), name, number: formattedNumber });
 
-    // ✅ Resetăm formularul după trimitere
     setName('');
     setNumber('');
-    setCountryCode('+40'); // Resetăm prefixul la cel implicit
+    setCountryCode('+40');
   };
 
   return (
@@ -84,7 +81,6 @@ const ContactForm = ({ onSubmit }) => {
       <div className={styles.inputGroup}>
         <label htmlFor="number" className={styles.label}></label>
         <div className={styles.numberInputContainer}>
-          {/* ✅ Dropdown pentru selectarea țării */}
           <select
             name="countryCode"
             value={countryCode}
@@ -98,7 +94,6 @@ const ContactForm = ({ onSubmit }) => {
             ))}
           </select>
 
-          {/* ✅ Input pentru numărul de telefon */}
           <input
             type="tel"
             name="number"
@@ -114,7 +109,9 @@ const ContactForm = ({ onSubmit }) => {
         </div>
       </div>
 
-      <button type="submit" className={styles.button}>Add contact</button>
+      <button type="submit" className={styles.button}>
+        Add contact
+      </button>
     </form>
   );
 };
